@@ -244,5 +244,122 @@ BingoJSBase.method('isAllLoaded', function(fieldMasterDataKeys) {
 	return true;
 });
 
+BingoJSBase.method('initFieldMasterDataResponse', function(key, data, callBack, loadAllCallBackData) {
+	this.fieldMasterData[key] = data;
+	this.filedMasterDataKeys[key] = true;
+	
+	if(callBack != undefined && callBack != null){
+		callBack();
+	}
+	
+	if(this.fieldMasterDataCallBack != null && this.fieldMasterDataCallBack != undefined && this.isAllLoaded(this.fieldMasterDataKeys)){
+		if(this.fieldMasterDataCallBackData == null || this.fieldMasterDataCallBackData == undefined){
+			this.fieldMasterDataCallBack();
+		}else{
+			this.fieldMasterDataCallBack(this.fieldMasterDataCallBackData);
+		}
+	}
+});
 
 
+BingoJSBase.method('getMetaFieldValues', function(key, fields) {
+	for(var i=0; i<fields.length; i++){
+		if(key == fields[i][0]){
+			return fields[i][1];
+		}
+	}
+	return null;
+});
+
+BingoJSBase.method('getSourceMapping', function() {
+	return this.sourceMapping;
+});
+
+BingoJSBase.method('setTesting', function(testing) {
+	this.testing = testing;
+});
+
+BingoJSBase.method('consoleLog', function(message) {
+	if(this.testing){
+		console.log(message);
+	}
+});
+
+BingoJSBase.method('setClientMessages', function(msgList) {
+	this.msgList = msgList;
+});
+
+BingoJSBase.method('setTemplates', function(templates) {
+	this.templates = templates;
+});
+
+BingoJSBase.method('getWSProperty', function(array, key) {
+	if(array.hasOwnProperty(key)){
+		return array[key];
+	}
+	return null;
+});
+
+BingoJSBase.method('getClientMessages', function(key) {
+	return this.getWSProperty(this.msgList, key);
+});
+
+BingoJSBase.method('getTemplates', function(key) {
+	return this.getWSProperty(this.templates, key);
+});
+
+BingoJSBase.method('setGoogleAnalytics', function(gaq) {
+	this.gaq = gaq;
+});
+
+BingoJSBase.method('showView', function(view) {
+	if(this.currentView != null){
+		this.previousView = this.currentView;
+		$("#" + this.currentView).hide();
+	}
+	$("#" + view).show();
+	this.currentView = view;
+	this.moveToTop();
+});
+
+BingoJSBase.method('showPreviousView', function() {
+	this.showView(this.previousView);
+});
+
+BingoJSBase.method('moveToTop', function() {
+	
+});
+
+BingoJSBase.method('callFunction', function(callback, cbParams, thisParam) {
+	if($.isFunction(callback)){
+		try{
+			if(thisParam == undefined || thisParam == null){
+				callback.apply(document, cbParams);
+			}else{
+				callback.apply(thisParam, cbParams);
+			}
+		}catch(e){
+		}
+	}else{
+		f = this[callback];
+		if($.isFunction(f)){
+			try{
+				f.apply(this, cbParams);
+			}catch(e){
+			}
+		}
+	}
+	return;
+});
+
+
+BingoJSBase.method('getTableTopButtonHtml', function() {
+	var html = "";
+	if(this.getShowAddNew()){
+		html = '<button onclick="modJs.renderForm();return false;" class="btn btn-small btn-primary">' + this.getAddNewLabel() + '<i class="fa fa-plus"></i></button>';
+	}
+	
+	if(this.getFilters() != null){
+		html += '&nbsp;&nbsp;';
+	}
+});
