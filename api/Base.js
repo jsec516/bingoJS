@@ -13,7 +13,7 @@ function BingoJSBase() {
 	this.showSave = true; // show add button
 	this.showCancel = true; // show cancel button
 	this.showFormOnPopup = false; // show form in popup
-	this.filtersAlreadySet = false;
+	this.filtersAlreadySet = false; // flag for filters already applied or not
 	this.currentFilterString = '';
 }
 
@@ -360,6 +360,30 @@ BingoJSBase.method('getTableTopButtonHtml', function() {
 	}
 	
 	if(this.getFilters() != null){
+		if(html != null){
+			html += '&nbsp;&nbsp;';
+		}
+		html += '<button onclick="modJs.showFilters();return false;" class="btn btn-small btn-primary">Filter <i class="fa fa-filter"></i></button>';
 		html += '&nbsp;&nbsp;';
+		if(this.filtersAlreadySet){
+			html += '<button id="__id__resetFilters" onclick="modJs.resetFilters();return false;" class="btn btn-small btn-default">__filterString__ <i class="fa fa-times"></i></button>'; 
+		}else{
+			html += '<button id="__id__resetFilters" onclick="modJs.resetFilters();return false;" class="btn btn-small btn-default" style="display:none;">__filterString__ <i class="fa fa-times"></i></button>';
+		}
 	}
+	
+	html = html.replace('__id__/g', this.getTableName());
+	
+	if(this.getCurrentFilterString != "" && this.currentFilterString != null){
+		html = html.replace('__filterString__/g', this.currentFilterString);
+	}else{
+		html = html.replace('__filterString__/g', 'Reset Filters');
+	}
+	
+	if(html != ""){
+		html = '<div class="row"><div class="col-xs-12">' + html + "</div></div>";
+	}
+	
+	return html;
 });
+
