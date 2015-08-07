@@ -387,3 +387,24 @@ BingoJSBase.method('getTableTopButtonHtml', function() {
 	return html;
 });
 
+/**
+ * Create the data table on provided element id
+ * @method createTable
+ * @param elementId {Boolean}
+ */
+BingoJSBase.method('createTable', function(elementId) {
+	
+	if(this.getRemoteTable()){
+		this.createTableServer(elementId);
+		return;
+	}
+	
+	var headers = this.getHeaders();
+	var data = this.getTableData();
+	
+	if(this.showActionButtons()){
+		headers.push({ "sTitle":"", "sClass":"center"});
+	}
+	
+	
+});
