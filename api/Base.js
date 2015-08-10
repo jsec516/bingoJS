@@ -406,5 +406,52 @@ BingoJSBase.method('createTable', function(elementId) {
 		headers.push({ "sTitle":"", "sClass":"center"});
 	}
 	
+	if(this.showActionButtons()){
+		for(var i=0; i<data.length; i++){
+			data[i].push(this.getActionButtonsHtml(data[i][0], data[i]));
+		}
+	}
 	
+	var html = '';
+	html = this.getTableTopButtonHtml() + '<div class="box-body table-responsive"><table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="grid"></table></div>';
+	
+	//find current page
+	var activePage = $('#' + elementId + ' .dataTables_paginate .active a').html();
+	var start = 0;
+	if(activePage != undefined && activePage != null){
+		start = parseInt(activePage, 10)*15 - 15;
+	}
+	
+	$('#' + elementId).html(html);
+	
+	var dataTableParams = {
+		"oLanguage" : {
+			'sLengthMenu' : '_MENU_ records per page'
+		},
+		"aaData" : data,
+		"aoColumns" : headers,
+		"bSort" : false,
+		"iDisplayLength" : 15,
+		"iDisplayStart" : start
+	};
+	
+	var customTableParams = this.customTableParams();
+	
+	$.extend(dataTableParams, customTableParams);
+	
+	$('#' + elementId + ' #grid').dataTable(dataTableParams);
+	$('.dataTables_paginate ul').addClass('pagination');
+	$('.dataTables_length').hide();
+	$('.dataTables_filter input').addClass('form-control');
+	$('.dataTables_filter input').attr('placeholder', 'Search');
+	$('.dataTables_filter label').contents().filter(function(){
+		return (this.nodetype == 3);
+	}).remove();
+	$('.tableActionButton').tooltip();
 });
+
+/**
+ * Create a data table on provided element id which loads data page by page
+ * @method createTableServer
+ * @param val {Boolean}
+ */
