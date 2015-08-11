@@ -455,3 +455,56 @@ BingoJSBase.method('createTable', function(elementId) {
  * @method createTableServer
  * @param val {Boolean}
  */
+BingoJSBase.method('createTableServer', function(elementId) {
+	var that = this;
+	var headers = this.getHeaders();
+	
+	headers.push({'sTitle': '', 'sClass': 'center'});
+	
+	var html = "";
+	html = this.getTableTopButtonHtml() + '<div class="box-body table-responsive"><table cellpadding="0" cellspacing="0" border="0" class="table table-bordered table-striped" id="grid"></table></div>';
+	
+	//find current page
+	var activePage = $('#' + elementId + ' .dataTables_paginate .active a').html();
+	var start = 0;
+	if(activePage != undefined && activePage != null){
+		start = parseInt(activePage, 10)*15 - 15;
+	}
+	
+	$('#' + elementId).html(html);
+	
+	var dataTableParams = {
+		"oLanguage" : {
+			'sLengthMenu' : '_MENU_ records per page'
+		},
+		"bProcessing" : true,
+		"bServerSide" : true,
+		"sAjaxSource" : that.getDataUrl(that.getDataMapping()),
+		"aoColumns" : headers,
+		"bSort" : false,
+		"parent" : that,
+		"iDisplayLength" : 15,
+		"iDisplayStart" : start
+	};
+	
+	if(this.showActionButtons()){
+		dataTableParams["aoColumnDefs"] = [
+			{
+				'fnRender': that.getActionButtons(),
+				'aTargets': [that.getDataMapping().length] 
+			}
+		];
+	}
+	
+	var customTableParams = this.getCustomTableParams();
+	$.extend(dataTableParams, customTableParams);
+	$('#'+elementId+' #grid').dataTable( dataTableParams );
+	$(".dataTables_paginate ul").addClass("pagination");
+	$(".dataTables_length").hide();
+	$(".dataTables_filter input").addClass("form-control");
+	$(".dataTables_filter input").attr("placeholder","Search");
+	$('.dataTables_filter label').contents().filter(function(){
+		return (this.nodetype == 3);
+	}).remove();
+	$('.tableActionButton').tooltip();
+});
