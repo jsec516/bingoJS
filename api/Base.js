@@ -508,3 +508,130 @@ BingoJSBase.method('createTableServer', function(elementId) {
 	}).remove();
 	$('.tableActionButton').tooltip();
 });
+
+/**
+ * This should be overridden in module lib.js classes to return module headers which are used to create the data table.
+ * @method getHeaders
+ * @example
+	SettingAdapter.method('getHeaders', function() {
+  		return [
+			{ "sTitle": "ID" ,"bVisible":false},
+			{ "sTitle": "Name" },
+			{ "sTitle": "Value"},
+			{ "sTitle": "Details"}
+		];
+		});
+ */
+BingoJSBase.method('getHeaders', function() {
+	
+});
+
+/**
+ * This should be overridden in module lib.js classes to return module field values which are used to create the data table.
+ * @method getDataMapping
+ * @example
+	SettingAdapter.method('getDataMapping', function() {
+	return [
+	        "id",
+	        "name",
+	        "value",
+	        "description"
+	];
+	});
+ */
+BingoJSBase.method('getDataMapping', function() {
+	
+});
+
+/**
+ * This should be overridden in module lib.js classes to return module form fields which are used to create the add/edit form and also used for initializing select box values in form.
+ * @method getFormFields
+ * @example
+	SettingAdapter.method('getFormFields', function() {
+	return [
+	        [ "id", {"label":"ID","type":"hidden"}],
+	        [ "value", {"label":"Value","type":"text","validation":"none"}]
+	];
+	});
+ */
+BingoJSBase.method('getFormFields', function() {
+	
+});
+
+BingoJSBase.method('getTableData', function() {
+	
+});
+
+/**
+ * This can be overridden in module lib.js classes inorder to show a filter form
+ * @method getFilters
+ * @example
+	EmployeeAdapter.method('getFilters', function() {
+		return [
+		        [ "job_title", {"label":"Job Title","type":"select2","allow-null":true,"null-label":"All Job Titles","remote-source":["JobTitle","id","name"]}],
+		        [ "department", {"label":"Department","type":"select2","allow-null":true,"null-label":"All Departments","remote-source":["CompanyStructure","id","title"]}],
+		        [ "supervisor", {"label":"Supervisor","type":"select2","allow-null":true,"null-label":"Anyone","remote-source":["Employee","id","first_name+last_name"]}]
+		];
+	});
+ */
+BingoJSBase.method('getFilters', function() {
+	return null;
+});
+
+/**
+ * Show the edit form for an item
+ * @method edit
+ * @param id {int} id of the item to edit
+ */
+BingoJSBase.method('edit', function(id) {
+	this.currentId = id;
+	this.getElement(id, []);
+});
+
+BingoJSBase.method('renderModel', function(id, header, body) {
+	$('#'+id+'ModelBody').html('');
+	
+	if(body == undefined || body == null){
+		body = '';
+	}
+	
+	$('#'+id+'ModelLabel').html(header);
+	$('#'+id+'ModelBody').html(body);
+	
+});
+
+
+BingoJSBase.method('renderModelFromDom', function(id, header, element) {
+	$('#'+id+'ModelBody').html('');
+	
+	if(element == undefined || element == null){
+		element = '';
+	}
+	
+	$('#'+id+'ModelLabel').html(header);
+	$('#'+id+'ModelBody').html('');
+	$('#'+id+'ModelBody').append(element);
+});
+
+/**
+ * Delete an item
+ * @method deleteRow
+ * @param id {int} id of the item to edit
+ */
+BingoJSBase.method('deleteRow', function(id) {
+	this.deleteParams['id'] = id;
+	this.renderModel('delete',"Confirm Deletion","Are you sure you want to delete this item ?");
+	$('#deleteModel').modal('show');
+});
+
+/**
+ * Show a popup with message
+ * @method showMessage
+ * @param title {String} title of the message box
+ * @param message {String} message
+ * @param closeCallback {Function} this will be called once the dialog is closed (optional)
+ * @param closeCallback {Function} data to pass to close callback (optional)
+ * @param isPlain {Boolean} if true buttons are not shown (optional / default = true)
+ * @example
+ * 	this.showMessage("Error Occured while Applying Leave", callBackData);
+ */
