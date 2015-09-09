@@ -635,3 +635,25 @@ BingoJSBase.method('deleteRow', function(id) {
  * @example
  * 	this.showMessage("Error Occured while Applying Leave", callBackData);
  */
+BingoJSBase.method('showMessage', function(title, message, closeCallback, closeCallbackData, isPlain) {
+	var that = this;
+	var modelId = '';
+	if(isPlain){
+		modelId = "#plainMessageModel";
+		this.renderModel('plainMessage', title, message);
+	}else{
+		modelId = "#messageModel";
+		this.renderModel('message',title,message);
+	}
+	
+	$(modelId).unbind('hide');
+	if(closeCallback != null && closeCallback != undefined){
+		$(modelId).on('hidden.bs.modal',function(){
+			closeCallback.apply(that,closeCallbackData);
+			$(modelId).unbind('hidden.bs.modal');
+		});
+	}
+	$(modelId).modal({
+		  backdrop: 'static'
+	});
+});
